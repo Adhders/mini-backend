@@ -1,0 +1,7 @@
+django-haystack
+django-redis
+ronglian-sms-sdk
+pyDes-2.0.1
+qiniu-7.4.1
+qrcode-7.3
+elasticsearch-7.14.1
