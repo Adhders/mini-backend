@@ -94,36 +94,36 @@ class OrdersInfoView(View):
             return http.HttpResponseForbidden()
         return http.JsonResponse({'code': RETCODE.OK, 'orderState': orderState})
 
-# class RefundView(View):
-#     def post(self, request, orderNum):
-#         """
-#         :param request:
-#         :return:
-#         """
-#         # 1.接受参数
-#         # 1.创建新的商品对象
-#         try:
-#             order = Order.objects.get(orderNum=orderNum)
-#             refundNum = 10000 + order.store.id + int(time.time() * 1000)
-#             RefundOrder.objects.create(
-#                 store=order.store,
-#                 customer=order.customer,
-#                 orderNum=order.orderNum,
-#                 refundNum=str(refundNum),
-#                 status=order.status,
-#                 goodsList=order.goodsList,
-#             )
-#         except Exception as e:
-#             return http.HttpResponseForbidden()
-#         # 4.响应
-#         return http.JsonResponse({"code": RETCODE.OK})
-#
-#     def get(self, request, openid):
-#         # 1.接受参数
-#         # 1.创建新的图片对象
-#         try:
-#             customer = Customer.objects.get(openid=openid)
-#             res = customer.RefundOrder_set.values()
-#         except Exception as e:
-#             return http.HttpResponseForbidden()
-#         return http.JsonResponse({'code': RETCODE.OK, 'refundList': list(res)})
+class RefundView(View):
+    def post(self, request, orderNum):
+        """
+        :param request:
+        :return:
+        """
+        # 1.接受参数
+        # 1.创建新的商品对象
+        try:
+            order = Order.objects.get(orderNum=orderNum)
+            refundNum = 10000 + order.store.id + int(time.time() * 1000)
+            RefundOrder.objects.create(
+                store=order.store,
+                customer=order.customer,
+                orderNum=order.orderNum,
+                refundNum=str(refundNum),
+                status=order.status,
+                goodsList=order.goodsList,
+            )
+        except Exception as e:
+            return http.HttpResponseForbidden()
+        # 4.响应
+        return http.JsonResponse({"code": RETCODE.OK})
+
+    def get(self, request, openid):
+        # 1.接受参数
+        # 1.创建新的图片对象
+        try:
+            customer = Customer.objects.get(openid=openid)
+            res = customer.RefundOrder_set.values()
+        except Exception as e:
+            return http.HttpResponseForbidden()
+        return http.JsonResponse({'code': RETCODE.OK, 'refundList': list(res)})
