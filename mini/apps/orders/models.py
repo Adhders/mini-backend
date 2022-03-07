@@ -14,7 +14,7 @@ class Order(models.Model):
     discount = models.FloatField(verbose_name="优惠", default=0.00)
     shipping_fee = models.FloatField(verbose_name='邮费', default=0.00)
     paymentInfo = models.JSONField(verbose_name="支付信息", null=True)
-    addedReview = models.BooleanField(verbose_name="是否追评", default=False)
+    reviewState = models.JSONField(verbose_name="评论状态", null=True)
     goodsList = models.JSONField(verbose_name="商品列表", null=True)
     address = models.JSONField(verbose_name="邮寄地址", null=True)
     payment_time = models.DateTimeField(auto_now=False, null=True, verbose_name="支付时间")

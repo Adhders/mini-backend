@@ -8,6 +8,8 @@ from django.views import View
 from django.forms.models import model_to_dict
 from .models import Goods, SPU, GoodsGroup, GoodsTag, GoodsProperty, GoodsReview
 from store.models import Store
+from customer.models import Customer
+from orders.models import Order
 from utils.response_code import RETCODE
 
 
@@ -251,26 +253,36 @@ class GoodsPropertyView(View):
 
 
 class GoodsReviewView(View):
-    def post(self, request, spu_id):
+    def post(self, request, spu_id, pid, orderNum, index):
         """
         :param request:
         :return:
         """
         # 1.接受参数
-        goods = json.loads(request.body)
+        goodsReview = json.loads(request.body)
+        print(goodsReview)
         # 1.创建新的商品对象
         try:
+            customer = Customer.objects.get(pid=pid)
             spu = SPU.objects.get(id=spu_id)
-            GoodsReview.objects.create(
+            review = GoodsReview.objects.create(
                 spu=spu,
-                star=goods['star'],
-                name=goods['name'],
-                msg=goods['msg'],
-                avatar=goods['avatar'],
-                imgs=goods['imgs'],
-                children=[],
-                anonymous=goods['anonymous'],
+                customer=customer,
+                star=goodsReview['star'],
+                name=goodsReview['name'],
+                msg=goodsReview['msg'],
+                specs=goodsReview['specs'],
+                avatar=goodsReview['avatar'],
+                imgs=goodsReview['imgs'],
+                anonymous=goodsReview['anonymous'],
             )
+            goodsReview['reviewState'][int(index)]['id'] = review.id
+            order = Order.objects.filter(orderNum=orderNum).first()
+            order.reviewState = goodsReview['reviewState']
+            res = filter(lambda x: x.count <= 1, order.reviewState)
+            if len(list(res)) == 0:
+                order.status = '交易完成'
+            order.save()
         except Exception as e:
             print(e)
             return http.HttpResponseForbidden()
@@ -289,9 +301,45 @@ class GoodsReviewView(View):
         return http.JsonResponse({'code': RETCODE.OK, 'reviewList': list(res)})
 
     def put(self, request, id, mode):
-        goods = json.loads(request.body)
-        if mode == 'likes':
-            GoodsReview.objects.filter(id=id).update(likes=goods['likes'])
-        elif mode == 'reply':
-            GoodsReview.objects.filter(id=id).update(children=goods['children'], reviews=goods['reviews'])
+        reviews = json.loads(request.body)
+        try:
+            if mode == 'likes':
+                GoodsReview.objects.filter(id=id).update(likes=reviews['likes'])
+            elif mode == 'reply':
+                GoodsReview.objects.filter(id=id).update(children=reviews['children'], reviews=reviews['reviews'])
+            elif mode == 'additional':
+                goodsReview = GoodsReview.objects.filter(id=id).first()
+                order = goodsReview.order
+                order.reviewState = reviews['reviewState']
+                goodsReview.additional = {'msg': reviews['msg'], 'imgs': reviews['imgs']}
+                order.save()
+                goodsReview.save()
+        except Exception as e:
+            print(e)
+            return http.HttpResponseForbidden()
         return http.JsonResponse({'code': RETCODE.OK})
+
+
+class GoodsReviewDefaultView(View):
+    @classmethod
+    def post(cls, request, specs, spu_id, customer):
+        """
+        :param request:
+        :return:
+        """
+        try:
+            spu = SPU.objects.get(id=spu_id)
+            review = GoodsReview.objects.create(
+                spu=spu,
+                customer=customer,
+                specs=specs,
+                name=customer.nickName,
+                msg='顾客未及时做出评价，系统默认好评',
+                avatar=customer.avatarUrl,
+            )
+        except Exception as e:
+            return http.HttpResponseForbidden()
+        # 4.响应
+        return review.id
+
+

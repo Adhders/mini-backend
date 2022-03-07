@@ -33,7 +33,7 @@ urlpatterns = [
     # 获取评论
     url(r'getGoodsReview/(?P<spu_id>.*)$', views.GoodsReviewView.as_view()),
     # 添加评论
-    url(r'^addGoodsReview/(?P<spu_id>.*)$', views.GoodsReviewView.as_view()),
+    url(r'^addGoodsReview/(?P<spu_id>.*)/(?P<pid>.*)/(?P<orderNum>.*)/(?P<index>.*)$', views.GoodsReviewView.as_view()),
 
     # 更新评论
     url(r'^updateGoodsReview/(?P<id>.*)/(?P<mode>.*)$', views.GoodsReviewView.as_view()),
