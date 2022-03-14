@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="x-ua-compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>test</title>
+</head>
+<body>
+<div></div>
+
+</body>
+<!-- 首先引入 jQuery -->
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.js"></script>
+<script>
+    // 判断浏览器是否支持WebSocket，目前应该所有的浏览器都支持了.....
+    if ('WebSocket' in window) {
+        console.log('你的浏览器支持 WebSocket')
+    }
+	// 创建一个WebSocket对象：sk，并且建立与服务端的连接（服务端程序要跑着哦）
+    var sk = new WebSocket('ws://' + window.location.host + '/test/');
+    // 向服务端发送消息
+    sk.onopen = function () {
+        console.log('websocket connection successful...');
+        var l = ['1', '2', '3'];
+        sk.send(JSON.stringify(l));
+    };
+    // 接收服务端的消息，主要的业务逻辑也在这里完成
+    sk.onmessage = function (msg) {
+        // 业务逻辑
+        html = "<p>" + msg.data + "</p>";
+        $("div").append(html);
+        console.log('from service message: ', msg.data);
+        // 由于服务端主动断开连接，这里也断开WebSocket连接
+        if (sk.readyState == WebSocket.CLOSED) sk.close();
+    };
+    // 完事就关闭WebSocket连接
+    sk.onclose = function (msg) {
+        console.log('websocket connection close...');
+        sk.close()
+    };
+    // 当WebSocket连接创建成功后，我们就可以向服务端发送数据了
+    if (sk.readyState == WebSocket.OPEN) sk.onopen();
+
+</script>
+</html>
