@@ -10,7 +10,7 @@ from hashlib import blake2b
 from django.views import View
 from store.models import Store
 from .models import Customer
-from django.forms.models import model_to_dict
+from orders.views import OrdersInfoView
 from utils.response_code import RETCODE
 from datetime import datetime, timedelta, timezone
 
@@ -21,6 +21,7 @@ def getpid(openid):
     h1.update(openid.encode())
     pid = h1.hexdigest()
     return pid
+
 
 def gettoken(pid, userInfo):
     payload = {
@@ -72,27 +73,28 @@ class CustomerView(View):
         # 1.接受参数
         try:
             customer = Customer.objects.filter(pid=pid).first()
+            orderState = OrdersInfoView.get(request, customer)
             res = dict()
             res['avatarUrl'] = customer.avatarUrl
             res['nickName'] = customer.nickName
             res['gender'] = customer.gender
             res['birthDay'] = customer.birthDay
             res['phone'] = customer.phone
-            res['defaultAddress'] = customer.defaultAddress
             pid = getpid(customer.openid)
             customer.pid = pid
             customer.save()
             token = gettoken(pid, res)
         except Exception as e:
             return http.HttpResponseForbidden()
-        return http.JsonResponse({'code': RETCODE.OK, 'token': token})
+        return http.JsonResponse({'code': RETCODE.OK, 'token': token, 'orderState': orderState})
 
     def put(self, request, pid, mode):
         customer = json.loads(request.body)
         try:
             if mode == 'addressList':
                 defaultAddress = customer['addressList'][0]
-                Customer.objects.filter(pid=pid).update(addressList=customer['addressList'], defaultAddress=defaultAddress)
+                Customer.objects.filter(pid=pid).update(addressList=customer['addressList'],
+                                                        defaultAddress=defaultAddress)
             elif mode == 'nickName':
                 Customer.objects.filter(pid=pid).update(nickName=customer['nickName'])
             elif mode == 'birthDay':

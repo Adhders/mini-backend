@@ -264,10 +264,13 @@ class GoodsReviewView(View):
         # 1.创建新的商品对象
         try:
             customer = Customer.objects.get(pid=pid)
-            spu = SPU.objects.get(id=spu_id)
+            order = Order.objects.filter(orderNum=orderNum).first()
+            obj = SPU.objects.filter(id=spu_id)
+            spu = obj.first() if obj.exists() else None
             review = GoodsReview.objects.create(
                 spu=spu,
                 customer=customer,
+                order=order,
                 star=goodsReview['star'],
                 name=goodsReview['name'],
                 msg=goodsReview['msg'],
@@ -277,9 +280,9 @@ class GoodsReviewView(View):
                 anonymous=goodsReview['anonymous'],
             )
             goodsReview['reviewState'][int(index)]['id'] = review.id
-            order = Order.objects.filter(orderNum=orderNum).first()
+
             order.reviewState = goodsReview['reviewState']
-            res = filter(lambda x: x.count <= 1, order.reviewState)
+            res = filter(lambda x: x['count'] == 0, order.reviewState)
             if len(list(res)) == 0:
                 order.status = '交易完成'
             order.save()
@@ -287,7 +290,7 @@ class GoodsReviewView(View):
             print(e)
             return http.HttpResponseForbidden()
         # 4.响应
-        return http.JsonResponse({"code": RETCODE.OK})
+        return http.JsonResponse({"code": RETCODE.OK, 'reviewState': goodsReview['reviewState']})
 
     def get(self, request, spu_id):
         # 1.接受参数
@@ -322,7 +325,7 @@ class GoodsReviewView(View):
 
 class GoodsReviewDefaultView(View):
     @classmethod
-    def post(cls, request, specs, spu_id, customer):
+    def post(cls, request, specs, spu_id, order, customer):
         """
         :param request:
         :return:
@@ -332,12 +335,15 @@ class GoodsReviewDefaultView(View):
             review = GoodsReview.objects.create(
                 spu=spu,
                 customer=customer,
+                order=order,
                 specs=specs,
                 name=customer.nickName,
                 msg='顾客未及时做出评价，系统默认好评',
                 avatar=customer.avatarUrl,
             )
+            print(review, review.id)
         except Exception as e:
+            print('default',e)
             return http.HttpResponseForbidden()
         # 4.响应
         return review.id

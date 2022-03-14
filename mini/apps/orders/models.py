@@ -22,16 +22,27 @@ class Order(models.Model):
 
     class Meta:
         db_table = 'tb_order'
+        ordering = ['-create_time']
         verbose_name = 'tb_order'
         verbose_name_plural = verbose_name
 
 
 class RefundOrder(models.Model):
-    orderNum = models.ForeignKey('orders.Order', to_field='orderNum', on_delete=models.CASCADE, verbose_name='订单号')
+    store = models.ForeignKey('store.Store', on_delete=models.CASCADE, related_name='all_refundOrders', verbose_name='店铺订单', null=True)
+    customer = models.ForeignKey('customer.Customer', to_field='openid', on_delete=models.CASCADE, verbose_name='顾客', null=True)
+    order = models.ForeignKey('orders.Order', to_field='orderNum', on_delete=models.CASCADE, verbose_name='订单号')
     refundNum = models.CharField(max_length=20, verbose_name='退款编号', unique=True)
+    refundType = models.CharField(max_length=20, verbose_name='退款类型')
+    refund_fee = models.FloatField(verbose_name='退款金额', default=0)
+    imgs = models.JSONField(verbose_name="附件", null=True)
+    # 退款成功  #申请已撤销  #处理中
+    status = models.CharField(max_length=10, verbose_name='退款状态', default='处理中')
+    reason = models.CharField(max_length=100, verbose_name='退款原因', default='')
+    description = models.CharField(max_length=200, verbose_name='退款详述', default='')
     create_time = models.DateTimeField(auto_now=False, auto_now_add=True, verbose_name="创建时间", null=True)
 
     class Meta:
         db_table = 'tb_refund_order'
+        ordering = ['-create_time']
         verbose_name = 'tb_refund_order'
         verbose_name_plural = verbose_name

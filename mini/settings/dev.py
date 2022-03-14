@@ -60,13 +60,12 @@ MIDDLEWARE = [
     'middlewares.UserMiddleware.LoginMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
-
 ]
 
 ROOT_URLCONF = 'mini.urls'
 
 TEMPLATES = [
-{
+    {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [os.path.join(BASE_DIR, 'dist')],
         'APP_DIRS': True,

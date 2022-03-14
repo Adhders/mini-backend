@@ -60,7 +60,7 @@ class SPU(models.Model):
 
 
 class GoodsReview(models.Model):
-    spu = models.ForeignKey('goods.SPU', on_delete=models.CASCADE, related_name='all_reviews', verbose_name='评论')
+    spu = models.ForeignKey('goods.SPU', on_delete=models.CASCADE, related_name='all_reviews', verbose_name='评论', null=True)
     customer = models.ForeignKey('customer.Customer', to_field='openid', on_delete=models.CASCADE)
     order = models.ForeignKey('orders.Order', to_field='orderNum', on_delete=models.CASCADE, null=True)
     star = models.IntegerField(verbose_name='星数', default=5)
@@ -71,7 +71,7 @@ class GoodsReview(models.Model):
     msg = models.CharField(max_length=250, verbose_name='评论')
     specs = models.CharField(max_length=200, verbose_name='规格')
     avatar = models.CharField(max_length=250, verbose_name='用户头像')
-    imgs = models.JSONField(verbose_name="评论图片", null=True)
+    imgs = models.JSONField(verbose_name="评论图片", default=list)
     additional = models.JSONField(verbose_name="追加评论", null=True)
     videoUrl = models.CharField(max_length=100, verbose_name='视频封面', null=True)
     videoImage = models.CharField(max_length=100, verbose_name='视频链接', null=True)
