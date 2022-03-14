@@ -89,7 +89,6 @@ class OrdersInfoView(View):
     @classmethod
     def get(self, request, customer):
         # 1.接受参数
-        # 1.创建新的图片对象
         orderState = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
         try:
             orderList = Order.objects.filter(customer=customer)
