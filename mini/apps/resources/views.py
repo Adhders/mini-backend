@@ -4,12 +4,13 @@ from django import http
 from django.views import View
 from .models import Image, Video, Article, Author, ImageGroup, VideoGroup, ArticleGroup
 from store.models import Store
+from utils import constants
 from utils.response_code import RETCODE
 from qiniu import Auth, BucketManager, build_batch_delete
 
 # 需要填写你的 Access Key 和 Secret Key
-access_key = 'qzwEr-xaXDxPHOxXAhPs6ofGA4HzCp8UQ1Jslvuo'
-secret_key = 'w3UaRyqtpD9pdtAkv-ruIlrxnGPr0JXdfjsch9UW'
+access_key = constants.ACCESSKEY
+secret_key = constants.SECRETKEY
 
 # 构建鉴权对象
 q = Auth(access_key, secret_key)
@@ -19,6 +20,7 @@ bucket = BucketManager(q)
 # Create your views here.
 class ImageView(View):
     """添加图片"""
+
     def post(self, request, pid, store_id):
         """
         用户注册实现
@@ -48,7 +50,7 @@ class ImageView(View):
     def get(self, request, pid, store_id):
         # 1.接受参数
         # 1.创建新的图片对象
-        print(pid, store_id)
+        # print(pid, store_id)
         try:
             store = Store.objects.get(pid=pid, id=store_id)
             res = store.all_image.values()
@@ -77,10 +79,31 @@ class ImageView(View):
                     image.update_time = datetime.now()
                 Image.objects.bulk_update(images, fields=['group'])
             if mode == 'title':
-                store.all_image.filter(id=updateData['id']).update(title=updateData['title'], update_time=datetime.now())
+                store.all_image.filter(id=updateData['id']).update(title=updateData['title'],
+                                                                   update_time=datetime.now())
         except Exception as e:
             return http.HttpResponseForbidden()
         return http.JsonResponse({'code': RETCODE.OK})
+
+
+def setNum(arr, props, num):
+    #设置图像分组或视频分组节点的num属性值
+    for o in arr:
+        if o['group'] == props:
+            o['num'] = num
+            break
+        if 'children' in o:
+            setNum(o['children'], props, num)
+
+def setSum(arr):
+    arr[0]['num'] = 0
+    def sum(s):
+        # 调整图像分组或视频分组父节点的num属性值，使其等于自身原始值与子元素值的和
+        if 'children' in s:
+            for item in s['children']:
+                s['num'] = s['num'] + sum(item)
+        return s['num']
+    sum(arr[0])
 
 
 class ImageGroupView(View):
@@ -89,15 +112,26 @@ class ImageGroupView(View):
             store = Store.objects.get(pid=pid, id=store_id)
             group = store.image_group
             if group.exists():
+                groupSet = {}
+                imageList = store.all_image.all()
+                for image in imageList:
+                    if image.group in groupSet:
+                        groupSet[image.group] += 1
+                    else:
+                        groupSet[image.group] = 1
                 res = group.first().group
+                for key, value in groupSet.items():
+                    setNum(res, key, value)
+                setSum(res)
             else:
-                res = [{'group': "全部图像", 'children': [{'group': '默认分组', 'id': 1163614357, 'num': 0}], 'id': 1,
+                res = [{'group': "全部图像", 'children': [{'group': '默认分组', 'id': 0, 'num': 0}], 'id': 1,
                         'num': 0}]
                 ImageGroup.objects.create(
                     store=store,
                     group=res,
                 )
         except Exception as e:
+            print(e)
             return http.HttpResponseForbidden()
         return http.JsonResponse({'code': RETCODE.OK, 'imageGroup': res})
 
@@ -106,7 +140,7 @@ class ImageGroupView(View):
             store = Store.objects.get(pid=pid, id=store_id)
             store.image_group.update(group=json.loads(request.body.decode()))
         except Exception as e:
-            print(request.body.decode(),e)
+            print(request.body.decode(), e)
             return http.HttpResponseForbidden()
         # 4.响应
         return http.JsonResponse({"code": RETCODE.OK})
@@ -175,10 +209,19 @@ class VideoGroupView(View):
             store = Store.objects.get(pid=pid, id=store_id)
             group = store.video_group
             if group.exists():
+                groupSet = {}
+                videoList = store.all_video.all()
+                for video in videoList:
+                    if video.group in groupSet:
+                        groupSet[video.group] += 1
+                    else:
+                        groupSet[video.group] = 1
                 res = group.first().group
+                for key, value in groupSet.items():
+                    setNum(res, key, value)
+                setSum(res)
             else:
-                res = [
-                    {'group': "全部视频", 'children': [{'group': '默认分组', 'id': 1163614357, 'num': 0}], 'id': 1, 'num': 0}]
+                res = [{'group': "全部视频", 'children': [{'group': '默认分组', 'id': 0, 'num': 0}], 'id': 1, 'num': 0}]
                 VideoGroup.objects.create(
                     store=store,
                     group=res,

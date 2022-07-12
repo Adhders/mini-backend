@@ -14,5 +14,4 @@ def send_sms_code(mobile, sms_code):
     """
     # 给当前手机号发短信
     # CCP().send_template_sms(要收短信的手机号, [短信验证码, 短信中提示的过期时间单位分钟], 短信模板id)
-    print(mobile, sms_code)
     CCP().send_template_sms(constants.SEND_SMS_TEMPLATE_ID,mobile, [sms_code, constants.SMS_CODE_REDIS_EXPIRES // 60])

@@ -39,10 +39,8 @@ INSTALLED_APPS = [
     # 注册应用
     'store.apps.StoreConfig',
     'users.apps.UsersConfig',  # 用户模块
-    'resources.apps.ResourcesConfig',    # 数据模块
-    'industry.apps.IndustryConfig',
+    'resources.apps.ResourcesConfig',  # 数据模块
     'dataCenter.apps.DatacenterConfig',
-    'areas.apps.AreasConfig',  # 省市区模块
     'goods.apps.GoodsConfig',  # 商品模块
     'orders.apps.OrdersConfig',  # 订单模块
     'customer.apps.CustomerConfig',  # 顾客模块
@@ -63,11 +61,10 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'mini.urls'
-
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'dist')],
+        'DIRS': [os.path.join(BASE_DIR, '../templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -95,10 +92,10 @@ DATABASES = {
         'PASSWORD': '123456',  # 数据库用户密码
         'NAME': 'mini',  # 数据库名字
         'TEST': {
-            'CHARSET' : 'utf8',
-            'COLLATION':'utf8_general_ci'
+            'CHARSET': 'utf8',
+            'COLLATION': 'utf8_general_ci'
         },
-        'OPTIONS':{
+        'OPTIONS': {
             "init_command": "SET foreign_key_checks = 0;"
         }
     }
@@ -127,8 +124,6 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
-
 USE_I18N = True
 
 USE_L10N = True
@@ -141,10 +136,9 @@ TIME_ZONE = 'Asia/Shanghai'
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 
-
 STATIC_URL = '/static/'
 # 配置静态文件加载路径
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATICFILES_DIRS = [os.path.join(BASE_DIR, '../static')]
 
 # redis数据库配置项
 CACHES = {
@@ -245,6 +239,9 @@ LOGGING = {
     }
 }
 
+
+X_FRAME_OPTIONS = 'ALLOW-FROM'
+
 # 修改Django认证系统中的用户模型
 AUTH_USER_MODEL = 'users.User'  # 应用名称.模型类名称
 
@@ -255,9 +252,9 @@ AUTHENTICATION_BACKENDS = ['users.utils.UsernameMobileAuthBackend']
 LOGIN_URL = '/login.html'
 ALLOWED_HOSTS = ['*']
 # QQ登录配置
-QQ_CLIENT_ID = '101518219'
-QQ_CLIENT_SECRET = '418d84ebdc7241efb79536886ae95224'
-QQ_REDIRECT_URI = 'http://www.meiduo.site:8000/oauth_callback'
+QQ_CLIENT_ID = ''
+QQ_CLIENT_SECRET = ''
+QQ_REDIRECT_URI = ''
 
 # 邮箱配置
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'  # 指定邮件后端
@@ -277,7 +274,8 @@ DEFAULT_FILE_STORAGE = 'utils.fastdfs.fdfs_storage.FastDFSStorage'
 
 # FastDFS相关参数
 # FDFS_BASE_URL = 'http://192.168.88.129:8888/'
-FDFS_BASE_URL = 'http://image.meiduo.site:8888/'
+FDFS_BASE_URL = ''
+
 
 # Haystack
 HAYSTACK_CONNECTIONS = {
@@ -292,10 +290,10 @@ HAYSTACK_CONNECTIONS = {
 HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
 
 # 支付宝
-ALIPAY_APPID = '2016091900551154'
+ALIPAY_APPID = ''
 ALIPAY_DEBUG = True  # 表示是沙箱环境还是真实支付环境
 ALIPAY_URL = 'https://openapi.alipaydev.com/gateway.do'
-ALIPAY_RETURN_URL = 'http://www.meiduo.site:8000/payment/status/'
+ALIPAY_RETURN_URL = ''
 
 CORS_ALLOW_CREDENTIALS = True
 # CORS_ORIGIN_ALLOW_ALL = True
@@ -304,27 +302,33 @@ CORS_ORIGIN_WHITELIST = (
     'http://localhost:8088',
     'http://127.0.0.1:8080',
     'http://localhost:8080',
+    'http://127.0.0.1:8081',
+    'http://localhost:8081',
+    'http://127.0.0.1:8000',
+    'http://localhost:8000',
+    'http://192.168.1.40:8080',
+    'http://192.168.1.40:8088'
 )
 
 CORS_ALLOW_METHODS = (
- 'DELETE',
- 'GET',
- 'OPTIONS',
- 'PATCH',
- 'POST',
- 'PUT',
- 'VIEW',
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+    'VIEW',
 )
 CORS_ALLOW_HEADERS = (
- 'XMLHttpRequest',
- 'X_FILENAME',
- 'accept-encoding',
- 'authorization',
- 'content-type',
- 'dnt',
- 'origin',
- 'user-agent',
- 'x-csrftoken',
- 'x-requested-with',
- 'Pragma',
+    'XMLHttpRequest',
+    'X_FILENAME',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+    'Pragma',
 )

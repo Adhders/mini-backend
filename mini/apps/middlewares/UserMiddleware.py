@@ -15,10 +15,11 @@ from django.http import HttpResponse
 
 class LoginMiddleware(MiddlewareMixin):
     def process_request(self, request):
-        # print('path', request.META['PATH_INFO'])
+        # print('path', request.META)
         request_path = request.META['PATH_INFO']
         token = request.META.get("HTTP_AUTHORIZATION")
         # print('token', token)
+        # print('method', request.META['REQUEST_METHOD'])
         key = 'SECRET_KEY_mini'
         if token:
             try:
@@ -28,9 +29,11 @@ class LoginMiddleware(MiddlewareMixin):
                 obj = HttpResponse('Unauthorized', status=401)
                 obj['Access-Control-Allow-Origin'] = '*'
                 return obj
-        # elif not re.match('^/user_|^/customer|^/getGoods', request_path):
-        #     obj = HttpResponse('Unauthorized', status=401)
-        #     obj['Access-Control-Allow-Origin'] = '*'
-        #     return obj
-
-
+        elif request.META['REQUEST_METHOD'] == 'GET' or request.META['REQUEST_METHOD'] == 'OPTIONS':
+            pass
+        elif re.match('^/user_|^/customer', request_path):
+            pass
+        else:
+            obj = HttpResponse('Unauthorized', status=401)
+            obj['Access-Control-Allow-Origin'] = '*'
+            return obj

@@ -24,6 +24,9 @@ urlpatterns = [
     url(r'^queryGoodsTag/(?P<pid>.*)/(?P<store_id>.*)$', views.GoodsTagView.as_view()),
     url(r'^queryGoodsProperty/(?P<pid>.*)/(?P<store_id>.*)$', views.GoodsPropertyView.as_view()),
 
+    # 获取商品详情
+    url(r"^queryGoodsDetail/(?P<spu_id>.*)$", views.GoodsDetailView.as_view()),
+
     # 删除商品
     url(r'^deleteGoods/(?P<pid>.*)/(?P<store_id>.*)$', views.GoodsView.as_view()),
 
@@ -31,11 +34,19 @@ urlpatterns = [
     url(r'^updateGoods/(?P<pid>.*)/(?P<store_id>.*)/(?P<mode>.*)$', views.GoodsView.as_view()),
 
     # 获取评论
-    url(r'getGoodsReview/(?P<spu_id>.*)$', views.GoodsReviewView.as_view()),
+    url(r'^getGoodsReview/(?P<spu_id>.*)$', views.GoodsReviewView.as_view()),
     # 添加评论
     url(r'^addGoodsReview/(?P<spu_id>.*)/(?P<pid>.*)/(?P<orderNum>.*)/(?P<index>.*)$', views.GoodsReviewView.as_view()),
 
+    # 编辑商品详情
+    url(r'^controller', views.GoodsDetailUploadView.as_view()),
+
+    url(r'^saas/basis/file/video', views.GoodsDetailVideoView.as_view()),
     # 更新评论
     url(r'^updateGoodsReview/(?P<id>.*)/(?P<mode>.*)$', views.GoodsReviewView.as_view()),
 
+    # 更新商品库存
+    url(r'^updateGoodsStock', views.updateGoodsStock.as_view())
+
 ]
+

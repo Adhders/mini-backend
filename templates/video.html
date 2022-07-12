@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>视频预览</title>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no,minimal-ui" name="viewport" />
+    <meta content="telephone=no" name="format-detection" />
+    <link href="/static/video.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body ondragstart="return false;" onselectstart="return true;">
+
+    <div id="app" class="pos-rlt video-con" @click="onVideoScreenClick">
+
+        <video id="videoPlayer" @ended="onVideoEnded" @loadedmetadata="onVideoLoadedMetaData" :controls="controls"
+            style="background:black;width:100%; height:100%; " x-webkit-airplay="true"  x5-video-player-type="h5" x5-video-orientation="h5"
+            x5-video-player-fullscreen="true" preload="auto" :src="url" :poster="coverUrl">
+        </video>
+        <div class="center-tip">
+            <img src="https://system.chuangbiying.com/assets/video-play.png" v-show="!videoPlaying" alt="" @click="playVideo">
+        </div>
+    </div>
+</body>
+<script charset="utf-8" src="/static/vue.js"></script>
+
+
+<script>
+    function getQueryStringByName(name) {
+
+        var result = location.search.match(new RegExp("[\?\&]" + name + "=([^\&]+)", "i"));
+
+        if (result == null || result.length < 1) {
+
+            return "";
+
+        }
+
+        return result[1];
+
+    }
+
+    function formatSeconds(seconds) {
+        var date = new Date(1970, 0, 1);
+        date.setSeconds(seconds);
+        return date.toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1");
+    }
+    Vue.filter('formatTime', function(value) { //全局方法 Vue.filter() 注册一个自定义过滤器,必须放在Vue实例化前面
+        if (value == 0) return "";
+        return formatSeconds(value);
+    });
+
+    function init() {
+
+        var app = new Vue({
+            el: '#app',
+            data: {
+                title: '视频预览',
+                url: "",
+                controls: false,
+                videoBarShow: false,
+                hover: false,
+                videoDuration: 0,
+                videoPlaying: false,
+                progress: 0,
+                coverUrl:""
+            },
+            methods: {
+                playVideo: function() {
+                    if (this.videoPlaying) return;
+                    var videoDom = $("#videoPlayer")[0];
+                    this.videoPlaying = true;
+                    videoDom.play();
+                    this.controls=true
+                },
+                pauseVideo: function() {
+
+                    if (!this.videoPlaying) return;
+                    var videoDom = $("#videoPlayer")[0];
+                    this.controls=false
+                    this.videoPlaying = false;
+                    videoDom.pause();
+                },
+                onVideoEnded: function() {
+                    this.controls=false
+                    this.videoPlaying = false;
+                    this.progress = 0;
+                },
+                onVideoLoadedMetaData: function() {
+                    var videoDom = $("#videoPlayer")[0];
+                    this.videoDuration = parseInt(videoDom.duration);
+
+                },
+                onVideoScreenClick: function() {
+                    this.videoBarShow = !this.videoBarShow;
+                }
+            }
+        });
+
+        var url = decodeURIComponent(getQueryStringByName("url"));
+        var cover = decodeURIComponent(getQueryStringByName("coverurl"));
+        app.url = url;
+        app.coverUrl = cover;
+    };
+    init();
+</script>
+
+</html>

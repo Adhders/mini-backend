@@ -24,6 +24,9 @@ urlpatterns = [
     # 更新用户信息
     url(r'^updateCustomer/(?P<pid>.*)/(?P<mode>.*)$', views.CustomerView.as_view()),
 
+    # 获取用户购物车
+    url(r'^getCartInfo/(?P<appid>.*)/(?P<pid>.*)$', views.CustomerCartView.as_view()),
+
     # 获取用户地址
     url(r'^getAddressList/(?P<pid>.*)$', views.CustomerAddressView.as_view()),
 ]

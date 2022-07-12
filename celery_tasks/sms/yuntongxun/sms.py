@@ -6,10 +6,10 @@ import json
 _accountSid = '8a216da87a332d53017ab38feb532a44'
 
 # 说明：主账号Token，登陆云通讯网站后，可在控制台-应用中看到开发者主账号AUTH TOKEN
-_accountToken = '87b2ce87675748c0aa9dbfc803cc4aca'
+_accountToken = 'ce4ad1e4e8ec23905782bbc9a548bc74'
 
 # 请使用管理控制台首页的APPID或自己创建应用的APPID
-_appId = '8a216da87a332d53017ab38fec462a4a'
+_appId = '8a216da880d67afb018132c2c2790c6e'
 
 # 说明：请求地址，生产环境配置成app.cloopen.com
 _serverIP = 'sandboxapp.cloopen.com'

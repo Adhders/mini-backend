@@ -12,7 +12,6 @@ class Image(models.Model):
     group = models.CharField(max_length=20, verbose_name='分组名称')
     create_time = models.DateTimeField(auto_now=False, auto_now_add=True, verbose_name="创建时间")
     update_time = models.DateTimeField(auto_now=True, auto_now_add=False, verbose_name="更新时间")
-    select = models.BooleanField(default=False, null=True, verbose_name='勾选')
 
     class Meta:
         db_table = 'tb_image'
@@ -35,8 +34,6 @@ class Video(models.Model):
     group = models.CharField(max_length=20, verbose_name='分组名称')
     create_time = models.DateTimeField(auto_now=False, auto_now_add=True, verbose_name="创建时间")
     update_time = models.DateTimeField(auto_now=True, auto_now_add=False, verbose_name="更新时间")
-    select = models.BooleanField(default=False, null=True, verbose_name='勾选')
-
     class Meta:
         db_table = 'tb_video'
         # admin只使用第一个字段进行排序
@@ -58,7 +55,6 @@ class Article(models.Model):
     groupList = models.CharField(max_length=80, verbose_name='分组列表')
     create_time = models.DateTimeField(auto_now=False, auto_now_add=True, verbose_name="创建时间")
     update_time = models.DateTimeField(auto_now=True, auto_now_add=False, verbose_name="更新时间")
-    select = models.BooleanField(default=False, null=True, verbose_name='勾选')
     top = models.BooleanField(default=False, null=True, verbose_name='勾选')
     conceal = models.BooleanField(default=False, null=True, verbose_name='勾选')
 

@@ -15,7 +15,7 @@ from django_redis import get_redis_connection
 
 from celery_tasks.email.tasks import send_verify_email
 from celery_tasks.sms.tasks import send_sms_code
-from utils import constants, tools
+from utils import constants
 from utils.response_code import RETCODE
 from .models import User
 

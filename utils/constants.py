@@ -18,3 +18,7 @@ SMS_CODE_SEND_FLAG = 60
 
 #密码校验码
 SECRET_KEY = 'cby-sass'
+
+#七牛云账户信息
+ACCESSKEY = 'qzwEr-xaXDxPHOxXAhPs6ofGA4HzCp8UQ1Jslvuo'
+SECRETKEY = 'w3UaRyqtpD9pdtAkv-ruIlrxnGPr0JXdfjsch9UW'

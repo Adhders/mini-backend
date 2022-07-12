@@ -11,4 +11,4 @@ celery_app = Celery('mini')
 # 加载celery配置,让生产者知道自己生产的任务存放到哪?
 celery_app.config_from_object('celery_tasks.config')
 # 自动注册celery任务(告诉生产者,它能生产什么样的任务)
-celery_app.autodiscover_tasks(['celery_tasks.sms', 'celery_tasks.email','celery_tasks.html'])
+celery_app.autodiscover_tasks(['celery_tasks.sms', 'celery_tasks.email'])
